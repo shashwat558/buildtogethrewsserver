@@ -1,3 +1,4 @@
+
 import { PrismaClient } from "@prisma/client";
 import  {WebSocketServer} from "ws"
 
@@ -40,7 +41,7 @@ wss.on("connection", (ws) => {
         }if(data.type=== "chatMessage"){
 
             try {
-                const [participants, message] = await prisma.$transaction([
+                const [message, participants] = await prisma.$transaction([
                 prisma.message.create({
                     data: {
 
@@ -88,7 +89,7 @@ wss.on("connection", (ws) => {
 
         }else if(data.type === "ping"){
             //add the data in db
-            await prisma.notification.create({
+            const notification = await prisma.notification.create({
                 data: {
                     projectId : data.projectId,
                     senderId: data.senderId,
@@ -96,14 +97,16 @@ wss.on("connection", (ws) => {
                     receiverId: data.targetedUserId
                 }
             })
+            console.log("this is notification",notification.id)
             //check what is the targeted socket 
             //ex:- users[user234] = ws--> this is targeted socket
             
             const targetedSocket = users[data.targetedUserId];
             // if target socket then ping
             if(targetedSocket){
+                
                 targetedSocket.send(
-                    JSON.stringify({type: "ping",senderName: data.senderName, senderId: data.senderId, projectId: data.projectId, projectName: data.projectName})
+                    JSON.stringify({type: "ping",pingId: notification.id,senderName: data.senderName, senderId: data.senderId, projectId: data.projectId, projectName: data.projectName})
                 );
             };
              
