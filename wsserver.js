@@ -1,13 +1,14 @@
 
+
 import { PrismaClient } from "@prisma/client";
 import  {WebSocketServer} from "ws"
-
+const PORT = process.env.PORT || 4000
 
 const prisma = new PrismaClient();
 
 //initiate a websocket server on port 4000
 
-const wss = new WebSocketServer({port: 4000});
+const wss = new WebSocketServer({port: PORT});
 
 //type of userSocket ex:- {user123: websocket{...}}
 
