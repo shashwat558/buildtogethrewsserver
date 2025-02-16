@@ -4,7 +4,14 @@ import { PrismaClient } from "@prisma/client";
 import  {WebSocketServer} from "ws"
 const PORT = process.env.PORT || 4000
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL, // Prisma reads from .env
+    },
+  },
+});
+
 
 //initiate a websocket server on port 4000
 
